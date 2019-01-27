@@ -1,8 +1,9 @@
 #include <WiFi.h>
 
 // WiFi network name and password:
-const char * networkName = "*******";
-const char * networkPswd = "*******";
+//const char * networkName = "*******";
+//const char * networkPswd = "*********";
+
 
 // Internet domain to request from:
 const char * hostDomain = "tori-collective-api.herokuapp.com";

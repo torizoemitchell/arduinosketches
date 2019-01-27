@@ -30,7 +30,7 @@ void loop() {
   
   
   double sum = 0;
-  int num = 1000000;
+  int num = 500000;
   for (int i = 1; i <= num; i++) {
    sum = sum + analogRead(sensePin);
   }
