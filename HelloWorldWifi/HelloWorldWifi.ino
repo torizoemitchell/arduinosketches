@@ -1,8 +1,8 @@
 #include <WiFi.h>
 
 // WiFi network name and password:
-const char * networkName = "ptarmigan2";
-const char * networkPswd = "ptarm19an5557skiing";
+const char * networkName = "*******";
+const char * networkPswd = "*******";
 
 // Internet domain to request from:
 const char * hostDomain = "tori-collective-api.herokuapp.com";
@@ -24,6 +24,7 @@ void setup()
   digitalWrite(LED_PIN, LOW); // LED off
   Serial.print("Press button 0 to connect to ");
   Serial.println(hostDomain);
+  
 }
 
 void loop()
