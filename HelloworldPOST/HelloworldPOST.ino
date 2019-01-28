@@ -4,8 +4,9 @@
 
 
 // WiFi network name and password:
-const char * networkName = "******";
-const char * networkPswd = "*******";
+//const char * networkName = "******";
+//const char * networkPswd = "*******";
+
 
 // Internet domain to request from:
 const char * hostDomain = "tempomobile.herokuapp.com";
@@ -32,8 +33,8 @@ void setup()
 
 void loop()
 {
-  if (digitalRead(BUTTON_PIN) == LOW)
-  { // Check if button has been pressed
+  if (digitalRead(BUTTON_PIN) == LOW){ 
+    // Check if button has been pressed
     while (digitalRead(BUTTON_PIN) == LOW)
       ; // Wait for button to be released
 
@@ -100,64 +101,6 @@ void requestURL(const char * host, uint8_t port)
       Serial.println("Error in WiFi connection");   
    
    }
-
-
-//{
-//  printLine();
-//  Serial.println("Connecting to domain: " + String(host));
-//
-//  // Use WiFiClient class to create TCP connections
-//  WiFiClient client;
-//  if (!client.connect(host, port))
-//  {
-//    Serial.println("connection failed");
-//    return;
-//  }
-//  Serial.println("Connected!");
-//  printLine();
-//
-//  String data = "{\"date\": \"2019-02-06\", \"temp\": \"98.60\"}";
-  
-  // This will send the request to the server
-//  client.print((String)"POST /entries/1 HTTP/1.1\r\n" +
-//               "Host: " + String(host) + "\r\n" +
-//               "Content-Type: application/json" + "\r\n\r\n" +
-//               {"date": "2019-02-06", "temp": "98.60"} + "\r\n"
-//               "Connection: close\r\n\r\n");
-
-//    client.println("POST /entries/1 HTTP/1.1");
-//    client.println("Host: " + String(host));
-//    client.println("Accept: */*");
-//    client.println("Content-Type: application/json");
-//    client.print("Content-Length: ");
-//    client.println(data.length());
-//    client.println();
-//    client.print(data);
-
-  
-//  unsigned long timeout = millis();
-//  while (client.available() == 0) 
-//  {
-//    if (millis() - timeout > 10000) 
-//    {
-//      Serial.println(">>> Client Timeout !");
-//      client.stop();
-//      return;
-//    }
-//  }
-
-  // Read all the lines of the reply from server and print them to Serial
-//  while (client.available()) 
-//  {
-////    String line = client.readStringUntil('\r');
-////    Serial.print(line);
-//    char c = client.read();
-//    Serial.print(c);
-//  }
-//
-//  Serial.println();
-//  Serial.println("closing connection");
-//  client.stop();
 }
 
 void printLine()

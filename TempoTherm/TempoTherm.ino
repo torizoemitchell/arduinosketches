@@ -17,20 +17,24 @@ const int LED_PIN = 5;
 //Wifi Setup-----------------------------------------------------------------
 //const char * networkName = "******";
 //const char * networkPswd = "*******";
-const char * networkName = "ptarmigan2";
-const char * networkPswd = "ptarm19an5557skiing";
+
+
 const char * hostDomain = "tempomobile.herokuapp.com";
 const int hostPort = 80;
-
-//General Settings----------------------------------------------------------
-const int numOfReadings = 2;
-
 
 void setup() {
   // start baud-----------------------------------------------------
   Serial.begin(9600); //Start the Serial Port at 9600 baud (default)
   OpenLCD.begin(9600); //Start communication with OpenLCD
 
+  //set backlight---------------------------------------------------
+  OpenLCD.write('|'); //Put LCD into setting mode
+  OpenLCD.write(158 + 0); //Set green backlight amount to 0%
+  OpenLCD.write('|'); //Put LCD into setting mode
+  OpenLCD.write(188 + 0); //Set blue backlight amount to 0%
+  OpenLCD.write('|'); //Put LCD into setting mode
+  OpenLCD.write(128); //Set white/red backlight amount to 0%
+  
   //initialize pins-------------------------------------------------
   pinMode(BUTTON_PIN, INPUT_PULLUP);
   pinMode(LED_PIN, OUTPUT);
@@ -47,8 +51,8 @@ void setup() {
   OpenLCD.write('-'); //Clear display
   //Send contrast setting
 //  OpenLCD.write('|'); //Put LCD into setting mode
-//  OpenLCD.write(24); //Send contrast command
-//  OpenLCD.write(contrast);
+  OpenLCD.write(24); //Send contrast command
+  OpenLCD.write(contrast);
 
    //Send the clear command to the display - this returns the cursor to the beginning of the display
 //  OpenLCD.write('|'); //Setting character
@@ -154,7 +158,15 @@ void loop() {
         ; // Wait for button to be released
 
         //Do the post request
+        OpenLCD.print("Sending...                      ");
+        delay(2000);
+        OpenLCD.write('|'); //Setting character
+        OpenLCD.write('-'); //Clear display
         Serial.println("do a post request");
+        connectToWiFi(networkName, networkPswd);
+        requestURL(hostDomain, hostPort, reading); // Connect to server
+        
+        
         return;
       }
     }
@@ -167,4 +179,91 @@ void loop() {
   
   
 
+}
+
+
+
+
+
+void connectToWiFi(const char * ssid, const char * pwd)
+{
+  int ledState = 0;
+
+ // printLine();
+  Serial.println("Connecting to WiFi network: " + String(ssid));
+
+  WiFi.begin(ssid, pwd);
+
+  while (WiFi.status() != WL_CONNECTED) 
+  {
+    // Blink LED while we're connecting:
+    digitalWrite(LED_PIN, ledState);
+    ledState = (ledState + 1) % 2; // Flip ledState
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println();
+  Serial.println("WiFi connected!");
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
+}
+
+void requestURL(const char * host, uint8_t port, double temp)
+{
+
+  
+  if(WiFi.status()== WL_CONNECTED){   //Check WiFi connection status
+   
+     HTTPClient http;   
+   
+     http.begin("http://tempomobile.herokuapp.com/entries/1");  //Specify destination for HTTP request
+     http.addHeader("Content-Type", "application/json");             //Specify content-type header
+   
+     int httpResponseCode = http.POST("{\"date\": \"2019-02-08\", \"temp\": " + String(temp) + "}");   //Send the actual POST request
+   
+     if(httpResponseCode>0){
+   
+      String response = http.getString();                       //Get the response to the request
+   
+      Serial.println(httpResponseCode);   //Print return code
+      Serial.println(response);           //Print request answer
+      OpenLCD.write('|'); //Setting character
+      OpenLCD.write('-'); //Clear display 
+      if(httpResponseCode == 200){
+        Serial.println("SUCCESSFUL RESPONSE");
+        OpenLCD.print("Success!                        ");
+        delay(5000);
+        OpenLCD.write('|'); //Setting character
+        OpenLCD.write('-'); //Clear display 
+        
+      }else{
+        OpenLCD.print("Error. Please  Try again.        ");
+        delay(5000);
+        OpenLCD.write('|'); //Setting character
+        OpenLCD.write('-'); //Clear display 
+      }
+      
+   
+     }else{
+   
+      Serial.print("Error on sending POST: ");
+      Serial.println(httpResponseCode);
+      delay(5000);
+      OpenLCD.write('|'); //Setting character
+      OpenLCD.write('-'); //Clear display   
+      OpenLCD.print("Error. Please  Try again.        ");
+      delay(5000);
+      OpenLCD.write('|'); //Setting character
+      OpenLCD.write('-'); //Clear display 
+   
+     }
+   
+     http.end();  //Free resources
+   
+   }else{
+   
+      Serial.println("Error in WiFi connection");   
+   
+   }
 }
